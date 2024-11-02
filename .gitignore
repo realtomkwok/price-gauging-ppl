@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 /.env.development
+/data/samples/coles-product-detail-2814013.json
+/data/samples/wws-category-poulty-meat-seafood.json
+/data/samples/wws-collection-variables.json
+/data/samples/wws-collections-header-body.json
+/data/samples/wws-product-detail-544760.json
