@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:tracker": "ts-node src/scripts/test-tracker.ts",
+    "start:tracker": "ts-node src/scripts/test-tracker.ts"
   },
   "dependencies": {
     "firebase": "^11.0.1",

@@ -1,4 +1,4 @@
-export interface WoolworthsProduct {
+export interface WwsProduct {
   Stockcode: number;
   Barcode: string;
   Name: string;
@@ -27,16 +27,16 @@ export interface WoolworthsProduct {
   AgeRestricted: boolean;
   SupplyLimit: number;
   ProductLimit: number;
-  Tags: Array<{
-    Content: {
-      Type: string;
-      Position: string;
-      Attributes: Record<string, string>;
-    };
-  }>;
-  AdditionalAttributes: {
-    nutritionalinformation: string;
-    allergencontains: string | null;
-    allergenmaybepresent: string | null;
-  };
+  // Tags: Array<{
+  //   Content: {
+  //     Type: string;
+  //     Position: string;
+  //     Attributes: Record<string, string>;
+  //   };
+  // }>;
+  // AdditionalAttributes: {
+  //   nutritionalinformation: string;
+  //   allergencontains: string | null;
+  //   allergenmaybepresent: string | null;
+  // };
 }
