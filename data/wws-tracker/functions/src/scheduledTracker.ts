@@ -1,10 +1,10 @@
 import { onSchedule } from "firebase-functions/v2/scheduler"
 import { initializeApp } from "firebase-admin/app"
-import { WwsBrowserTracker } from "@shared/tracker/wws-browser-tracker"
-import { TRACKER_CONFIG } from "@shared/tracker/config"
-import { FirebaseAdminService } from "@shared/services/firebase-admin.service"
-import { mapWwsToAppProduct } from "@shared/utils/product-mapper.utils"
-
+import { WwsBrowserTracker } from "./tracker/wws-browser-tracker"
+import { TRACKER_CONFIG } from "./tracker/config"
+import { FirebaseAdminService } from "./services/firebase-admin.service"
+import { mapWwsToAppProduct } from "@/utils/product-mapper.utils"
+import { ScraperOptions, WwsProduct } from "@/types"
 // Initialize Firebase Admin
 initializeApp()
 
@@ -35,6 +35,22 @@ class CloudWwsBrowserTracker extends WwsBrowserTracker {
 		if (errors.length > 0) {
 			console.warn(`Failed to save ${errors.length} products`)
 		}
+	}
+
+	// Implement the required methods if they're not in WwsBrowserTracker
+	async init() {
+		// Implementation depends on your needs
+		await super.init?.() // Call parent's init if it exists
+	}
+
+	async trackCategory(categoryId: string, name: string, urlFriendlyName: string, options?: ScraperOptions): Promise<WwsProduct[]> {
+		const products = await super.trackCategory(categoryId, name, urlFriendlyName, options);
+		return products;
+	}
+
+	async close() {
+		// Implementation depends on your needs
+		await super.close?.() // Call parent's close if it exists
 	}
 }
 

@@ -7,17 +7,14 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "es2020",
-		"baseUrl": ".",
-		"rootDir": "src",
-		"paths": {
-			"@shared/*": ["../src/*"]
-		},
-		"typeRoots": ["./node_modules/@types"],
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
 	},
-	"compileOnSave": true,
-	"include": ["src"],
-	"references": [{ "path": "../" }]
+	"include": ["src/**/*"]
 }
+

@@ -1,12 +1,6 @@
 import axios, { AxiosInstance } from "axios"
 import { TRACKER_CONFIG } from "./config"
-import {
-	CategoryRequest,
-	ScraperOptions,
-	CategoryResponse,
-	WwsCategoryResponse,
-  WwsProduct,
-} from "../types"
+import { ScraperOptions, CategoryResponse, WwsProduct } from "../types"
 import { FirebaseService } from "../services/firebase.service"
 import { mapWwsToAppProduct } from "../utils/product-mapper.utils"
 import {

@@ -8,14 +8,14 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "./dist",
-		"rootDir": "./src",
+		"rootDir": "src",
 		"resolveJsonModule": true,
 		"declaration": true,
-		"composite": true,
+		"baseUrl": ".",
 		"paths": {
-			"@shared/*": ["./src/*"]
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": ["src/**/*"],
-	"exclude": ["node_modules", "functions", "dist"]
+	"exclude": ["node_modules", "dist", "lib"]
 }

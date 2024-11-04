@@ -59,9 +59,9 @@ export class WwsBrowserTracker {
 			try {
 				// Navigate to the next page if not on first page
 				if (currentPage > 1) {
-					const nextPageUrl = `https://www.woolworths.com.au/shop/browse/${urlFriendlyName}?pageNumber=${currentPage}`;
-					await this.page.goto(nextPageUrl);
-					await sleep(2000); // Wait for page load
+					const nextPageUrl = `https://www.woolworths.com.au/shop/browse/${urlFriendlyName}?pageNumber=${currentPage}`
+					await this.page.goto(nextPageUrl)
+					await sleep(2000) // Wait for page load
 				}
 
 				const requestBody = generateRequestBody(
