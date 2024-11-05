@@ -20,6 +20,7 @@ module.exports = {
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
+    ".puppeteerrc.cjs",
   ],
   plugins: ["@typescript-eslint", "import", "jsdoc"],
   rules: {

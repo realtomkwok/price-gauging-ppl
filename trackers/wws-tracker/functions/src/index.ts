@@ -4,60 +4,82 @@ import {onSchedule} from "firebase-functions/v2/scheduler";
 import {initializeApp} from "firebase-admin/app";
 import {TrackerService} from "./services/tracker.service";
 import {FirestoreService} from "./services/firestore.service";
+import { TRACKER_CONFIG } from "./config/tracker.config";
 
 // Initialize Firebase Admin
 initializeApp();
 
-const trackerService = new TrackerService();
-const firestoreService = new FirestoreService();
-
 // Scheduled product tracker
 export const scheduledProductTracker = onSchedule(
   {
-    schedule: "0 */6 * * *", // Run every 6 hours
-    memory: "1GiB",
-    timeoutSeconds: 540, // 9 minutes
+    schedule: "0 6 * * *", // Run every 6 hours
+    memory: "2GiB",
+    // timeoutSeconds: 540, // 9 minutes
     retryCount: 3,
     region: "australia-southeast1",
+    timeZone: "Australia/Sydney",
   },
   async () => {
     console.log("Starting scheduled product tracking...");
 
     try {
+      // Initialize services (matching triggerProductTracker's initialization)
+      const trackerService = new TrackerService();
+      const firestoreService = new FirestoreService();
+
       await trackerService.initialize();
-      const categories = await firestoreService.getCategoriesToTrack();
 
-      for (const category of categories) {
-        try {
-          console.log(`Processing category: ${category.name}`);
-          const products = await trackerService.trackCategory(category);
+      try {
+        const categories = TRACKER_CONFIG.categories;
 
-          // Process in batches of 500 to optimize Firestore writes
-          const batchSize = 500;
-          for (let i = 0; i < products.length; i += batchSize) {
-            const batch = products.slice(i, i + batchSize);
-            await firestoreService.saveBatchProducts(batch);
+        const results = [];
+
+        for (const category of categories) {
+          try {
+            console.log(`Processing category: ${category.name}`);
+            const products = await trackerService.trackCategory(category);
+
+            // Process in batches of 500 (keeping original batch size)
+            const batchSize = 500;
+            for (let i = 0; i < products.length; i += batchSize) {
+              const batch = products.slice(i, i + batchSize);
+              await firestoreService.saveBatchProducts(batch);
+            }
+
+            results.push({
+              category: category.name,
+              productsProcessed: products.length,
+              status: "success",
+            });
+
+            console.log(
+              `Processed ${products.length} products for category ${category.name}`,
+            );
+          } catch (error: any) {
+            console.error(`Error processing category ${category.name}:`, error);
+            results.push({
+              category: category.name,
+              error: error.message,
+              status: "error",
+            });
           }
-        } catch (error) {
-          console.error(`Error processing category ${category.name}:`, error);
         }
+
+        console.log("Scheduled tracking completed", { results });
+      } finally {
+        await trackerService.cleanup();
       }
-    } catch (error) {
-      console.error("Fatal error in product tracker:", error);
+    } catch (error: any) {
+      console.error("Fatal error in scheduled product tracker:", error);
       throw error;
-    } finally {
-      await trackerService.cleanup();
     }
   },
 );
 
-// Triggered product tracker
-// ////////////////////////////////////////////////////////////////////////////////////////////
-
 export const triggerProductTracker = onRequest(
   {
-    memory: "1GiB",
-    timeoutSeconds: 540, // 9 minutes
+    memory: "2GiB",
+    // timeoutSeconds: 540, // 9 minutes
     region: "australia-southeast1",
   },
   async (req, res) => {
@@ -79,9 +101,8 @@ export const triggerProductTracker = onRequest(
 
       try {
         // Get categories from request or fetch all
-        const categories =
-          req.body.categories ||
-          (await firestoreService.getCategoriesToTrack());
+        // console.log("Categories requested:", req.body.categories);
+        const categories = TRACKER_CONFIG.categories;
 
         const results = [];
 

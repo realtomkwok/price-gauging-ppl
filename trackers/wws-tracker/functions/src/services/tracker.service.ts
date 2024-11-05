@@ -140,7 +140,8 @@ export class TrackerService {
         products.push(...pageProducts);
         trackedProducts += pageProducts.length;
         console.log(
-          `Found ${pageProducts.length} products on page ${currentPage}. Expected ${totalProducts! - trackedProducts} products to be tracked. \n Page: ${currentPage} of ${String(pageCount)}`,
+          `Found ${pageProducts.length} products on page ${currentPage}. Expected ${totalProducts! - trackedProducts} products to be tracked. \n
+          Page: ${currentPage} of ${String(pageCount)}`,
         );
 
         hasMorePages =
@@ -151,7 +152,7 @@ export class TrackerService {
         this.retryCount = 0;
 
         if (hasMorePages) {
-          const delay = delayBetweenRequests + Math.random() * 1000;
+          const delay = delayBetweenRequests + Math.random() * 200;
           await sleep(delay);
         }
       } catch (error) {

@@ -18,7 +18,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["lib/**/*", "generated/**/*"],
+    ignores: ["lib/**/*", "generated/**/*", "**/.puppeteerrc.cjs"],
 }, ...fixupConfigRules(compat.extends(
     "eslint:recommended",
     "plugin:import/errors",

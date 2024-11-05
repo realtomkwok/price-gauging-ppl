@@ -1,4 +1,0 @@
-curl -X POST http://127.0.0.1:5001/price-gauging-ppl/australia-southeast1/triggerProductTracker
-  -H "Authorization: Bearer your-secret-token" \
-  -H "Content-Type: application/json" \
-  -d '{"categories": [{"id": "1_D5A2236", "name": "Poultry, Meat & Seafood", "urlFriendlyName": "poultry-meat-seafood"}]}'

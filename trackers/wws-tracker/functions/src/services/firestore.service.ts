@@ -1,9 +1,25 @@
 import {getFirestore, Timestamp} from "firebase-admin/firestore";
 import {WwsProduct, AppProduct, Category} from "../types";
 import {mapWwsToAppProduct} from "../utils/product-mapper.utils";
+import { TRACKER_CONFIG } from "../config/tracker.config"
 
 export class FirestoreService {
   private db = getFirestore();
+  
+  async saveBatchCategories(): Promise<void> {
+      const batch = this.db.batch()
+      
+      TRACKER_CONFIG.categories.forEach((category: Category) => {
+        const docRef = this.db.collection("categories").doc(category.id)
+        batch.set(docRef, {
+          ...category,
+          isActive: true,
+        })
+      })
+      
+      await batch.commit()
+      console.log("Categories seeded successfully")
+  }
 
   async saveBatchProducts(products: WwsProduct[]): Promise<void> {
     const batches = [];
@@ -56,6 +72,8 @@ export class FirestoreService {
         wasPrice: product.pricing.current.wasPrice,
         cupPrice: product.pricing.current.cupPrice,
         cupMeasure: product.pricing.current.cupMeasure,
+        isOnSpecial: product.status.isOnSpecial,
+        isHalfPrice: product.status.isHalfPrice,
         timestamp: Timestamp.now(),
       },
     };
@@ -76,3 +94,4 @@ export class FirestoreService {
     );
   }
 }
+
