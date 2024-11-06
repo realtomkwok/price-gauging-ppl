@@ -27,7 +27,14 @@ export const mapWwsToAppProduct = (
       fieldName?: string,
     ): number => {
       if (typeof value !== "number" || isNaN(value)) {
-        console.debug(`Invalid number value for field: ${fieldName}`, value);
+        console.debug(
+          `Invalid number value for field "${fieldName || "unknown"}":`,
+          {
+            value,
+            type: typeof value,
+            isNaN: isNaN(value as number),
+            fieldPath: new Error().stack, // This will show the call stack
+          });
         return 0;
       }
       return value;

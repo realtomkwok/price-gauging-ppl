@@ -29,3 +29,4 @@ dist-ssr
 /data/samples/wws-collections-header-body.json
 /data/samples/wws-product-detail-544760.json
 /data/wws-tracker/functions/.env.default
+trackers/wws-tracker/curl.txt

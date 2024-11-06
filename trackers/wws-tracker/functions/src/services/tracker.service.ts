@@ -46,7 +46,7 @@ export class TrackerService {
   // Track products in a category
   async trackCategory(
     category: Category,
-    options: ScraperOptions = {},
+    options: ScraperOptions = {}
   ): Promise<WwsProduct[]> {
     if (!this.page) throw new Error("Browser not initialized");
 
@@ -56,7 +56,7 @@ export class TrackerService {
     } = options;
 
     console.log(
-      `Starting to track category: ${category.name} (${category.id})`,
+      `Starting to track category: ${category.name} (${category.id})`
     );
     let currentPage = 1;
     let hasMorePages = true;
@@ -65,7 +65,7 @@ export class TrackerService {
 
     // First visit the category page to get cookies
     await this.page.goto(
-      `${TRACKER_CONFIG.baseUrl}/shop/browse/${category.urlFriendlyName}`,
+      `${TRACKER_CONFIG.baseUrl}/shop/browse/${category.urlFriendlyName}`
     );
     await sleep(2000);
 
@@ -83,7 +83,7 @@ export class TrackerService {
           category.id,
           category.name,
           category.urlFriendlyName,
-          currentPage,
+          currentPage
         );
         console.log(`Fetching page ${currentPage}...`);
 
@@ -101,20 +101,35 @@ export class TrackerService {
                 credentials: "include",
               });
 
-              // Log response status and headers
               console.log(`Response status: ${resp.status}`);
-
-              // Get response text first
               const text = await resp.text();
-              console.log("Raw response:", text);
+
+              // Log raw response for debugging
+              console.log("Raw response:", text.substring(0, 1000), "...");
+
+              // Check if response is HTML
+              if (text.trim().startsWith("<!DOCTYPE") || text.trim().startsWith("<html")) {
+                // Extract meaningful information from HTML
+                const titleMatch = text.match(/<title>(.*?)<\/title>/i);
+                const h1Match = text.match(/<h1[^>]*>(.*?)<\/h1>/i);
+                const errorMessage = titleMatch?.[1] || h1Match?.[1] || "Unknown HTML response";
+
+                throw new Error(`Received HTML response: ${errorMessage}`);
+              }
 
               // Try to parse JSON
               try {
                 return JSON.parse(text);
-              } catch (e) {
-                console.error("JSON parse error:", e);
+              } catch (error) {
+                // If JSON parsing fails, include part of the raw response in the error
+                console.error("Fetch error:", error);
+
+                console.error(
+                  "Failed to parse response as JSON. First 1000 characters of response:"
+                );
+                console.error(text.substring(0, 1000));
                 throw new Error(
-                  `Failed to parse JSON: ${text.substring(0, 200)}...`,
+                  `Invalid JSON response. Response starts with: ${text.substring(0, 200)}...`
                 );
               }
             } catch (error) {
@@ -123,30 +138,34 @@ export class TrackerService {
             }
           },
           requestBody,
-          `${TRACKER_CONFIG.baseUrl}${TRACKER_CONFIG.endpoints.api}`,
+          `${TRACKER_CONFIG.baseUrl}${TRACKER_CONFIG.endpoints.api}`
         );
 
         if (!response?.Bundles) {
-          throw new Error(`Invalid response: ${JSON.stringify(response)}`);
+          throw new Error(
+            `Invalid response: ${JSON.stringify(response)}`
+          );
         }
 
         const totalProducts = response.TotalRecordCount;
         const pageCount =
-          Math.round(totalProducts! / TRACKER_CONFIG.defaultPageSize) + 1;
+					Math.round(
+						totalProducts! / TRACKER_CONFIG.defaultPageSize
+					) + 1;
 
         const pageProducts = response.Bundles.flatMap(
-          (bundle) => bundle.Products,
+          (bundle) => bundle.Products
         );
         products.push(...pageProducts);
         trackedProducts += pageProducts.length;
         console.log(
           `Found ${pageProducts.length} products on page ${currentPage}. Expected ${totalProducts! - trackedProducts} products to be tracked. \n
-          Page: ${currentPage} of ${String(pageCount)}`,
+          Page: ${currentPage} of ${String(pageCount)}`
         );
 
         hasMorePages =
-          pageProducts.length === TRACKER_CONFIG.defaultPageSize ||
-          trackedProducts < (totalProducts || 0);
+					pageProducts.length === TRACKER_CONFIG.defaultPageSize ||
+					trackedProducts < (totalProducts || 0);
 
         currentPage++;
         this.retryCount = 0;
@@ -166,19 +185,19 @@ export class TrackerService {
   private handleError(
     error: any,
     category: Category,
-    currentPage: number,
+    currentPage: number
   ): boolean {
     console.error(
       `Error tracking category ${category.name}, page ${currentPage}:`,
-      error,
+      error
     );
 
     if (this.retryCount < TRACKER_CONFIG.maxRetries) {
       this.retryCount++;
       const retryDelay =
-        TRACKER_CONFIG.delayBetweenRequests * (this.retryCount + 1);
+				TRACKER_CONFIG.delayBetweenRequests * (this.retryCount + 1);
       console.log(
-        `Retrying... Attempt ${this.retryCount} of ${TRACKER_CONFIG.maxRetries}`,
+        `Retrying... Attempt ${this.retryCount} of ${TRACKER_CONFIG.maxRetries}`
       );
       sleep(retryDelay);
       return true;

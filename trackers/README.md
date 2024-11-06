@@ -20,3 +20,5 @@ curl -X https://triggerproducttracker-2jsxpc64kq-ts.a.run.app/triggerProductTrac
 ```bash
   -d '{"categories": [{"id": "1_5AF3A0A", "name": "Drinks", "urlFriendlyName": "drinks"}]}'
 ```
+# Known Issues
+- Function runs too long (> 15 minutes) and triggers timeout for some categories (e.g. Cleaning)
