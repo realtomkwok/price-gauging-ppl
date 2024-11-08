@@ -23,7 +23,7 @@ export class FirestoreService {
     console.log("Categories seeded successfully");
   }
 
-  async saveBatchProducts(products: WwsProduct[]): Promise<void> {
+  async saveBatchProducts(products: WwsProduct[], category: Category): Promise<void> {
     const batches = [];
     let currentBatch = this.db.batch();
     let operationCount = 0;
@@ -36,8 +36,7 @@ export class FirestoreService {
           operationCount = 0;
         }
 
-        const mappedProduct = mapWwsToAppProduct(product);
-        // const stockcode = product.Stockcode.toString();
+        const mappedProduct = mapWwsToAppProduct(product, category);
         const barcode = product.Barcode.toString();
 
         const productRef = this.db.collection("products").doc(barcode);
@@ -129,6 +128,43 @@ export class FirestoreService {
       // In case of error, return false to allow tracking
       return false;
     }
+  }
+
+  async acquireLock(category: Category): Promise<boolean> {
+    const lockRef = this.db.collection("category-locks").doc(category.id);
+    const lockExpiration = new Date();
+    lockExpiration.setMinutes(lockExpiration.getMinutes() + 15);
+
+    try {
+      await lockRef.create({
+        categoryId: category.id,
+        acquiredAt: Timestamp.now(),
+        expiresAt: Timestamp.fromDate(lockExpiration),
+      });
+
+      return true;
+    } catch (error) {
+      // If document already exists, check if lock has expired
+      console.error(`Error acquiring lock for category ${category.name}:`, error);
+      const lockDoc = await lockRef.get();
+      if (lockDoc.exists) {
+        const lockData = lockDoc.data();
+        if (lockData?.expiresAt.toDate() < new Date()) {
+          // Lock has expired, update it
+          await lockRef.update({
+            acquiredAt: Timestamp.now(),
+            expiresAt: Timestamp.fromDate(lockExpiration),
+          });
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  async releaseLock(category: Category): Promise<void> {
+    const lockRef = this.db.collection("category-locks").doc(category.id);
+    await lockRef.delete();
   }
 }
 

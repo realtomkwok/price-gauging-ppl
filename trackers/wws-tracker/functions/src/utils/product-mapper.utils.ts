@@ -1,8 +1,9 @@
 import {Timestamp} from "firebase-admin/firestore";
-import {WwsProduct, AppProduct} from "../types";
+import {WwsProduct, AppProduct, Category} from "../types";
 
 export const mapWwsToAppProduct = (
   woolworthsProduct: WwsProduct,
+  category: Category,
 ): AppProduct => {
   try {
     if (!woolworthsProduct.Stockcode || !woolworthsProduct.Name) {
@@ -72,6 +73,11 @@ export const mapWwsToAppProduct = (
         packageSize: sanitizeString(woolworthsProduct.PackageSize),
         unit: sanitizeString(woolworthsProduct.Unit),
         minimumQuantity: sanitizeNumber(woolworthsProduct.MinimumQuantity),
+        category: {
+          id: category.id,
+          name: category.name,
+          urlFriendlyName: category.urlFriendlyName,
+        },
       },
       status: {
         isNew: sanitizeBoolean(woolworthsProduct.IsNew),
@@ -94,6 +100,7 @@ export const mapWwsToAppProduct = (
           effectiveDate: Timestamp.fromDate(new Date()),
         },
       },
+      lastUpdated: Timestamp.now(),
     };
   } catch (e) {
     console.error("Error mapping Woolworths product:", e, {

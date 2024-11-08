@@ -69,3 +69,4 @@ node_modules/
 .dataconnect
 /functions/.cache/
 /functions/lib/
+/data/csv-firebase-data/

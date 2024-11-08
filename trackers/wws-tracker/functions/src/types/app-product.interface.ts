@@ -17,6 +17,11 @@ export interface AppProduct {
     packageSize: string;
     unit: string;
     minimumQuantity: number;
+    category: {
+      id: string;
+      name: string;
+      urlFriendlyName: string;
+    };
   };
   status: {
     isNew: boolean;
@@ -39,4 +44,5 @@ export interface AppProduct {
       effectiveDate: Timestamp;
     };
   };
+  lastUpdated: Timestamp;
 }

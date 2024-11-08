@@ -149,9 +149,7 @@ export class TrackerService {
 
         const totalProducts = response.TotalRecordCount;
         const pageCount =
-					Math.round(
-						totalProducts! / TRACKER_CONFIG.defaultPageSize
-					) + 1;
+          Math.round(totalProducts! / TRACKER_CONFIG.defaultPageSize) + 1;
 
         const pageProducts = response.Bundles.flatMap(
           (bundle) => bundle.Products
@@ -164,8 +162,8 @@ export class TrackerService {
         );
 
         hasMorePages =
-					pageProducts.length === TRACKER_CONFIG.defaultPageSize ||
-					trackedProducts < (totalProducts || 0);
+          pageProducts.length === TRACKER_CONFIG.defaultPageSize ||
+          trackedProducts < (totalProducts || 0);
 
         currentPage++;
         this.retryCount = 0;
@@ -195,7 +193,7 @@ export class TrackerService {
     if (this.retryCount < TRACKER_CONFIG.maxRetries) {
       this.retryCount++;
       const retryDelay =
-				TRACKER_CONFIG.delayBetweenRequests * (this.retryCount + 1);
+        TRACKER_CONFIG.delayBetweenRequests * (this.retryCount + 1);
       console.log(
         `Retrying... Attempt ${this.retryCount} of ${TRACKER_CONFIG.maxRetries}`
       );
