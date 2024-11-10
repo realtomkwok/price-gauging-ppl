@@ -1,97 +1,61 @@
 import mongoose, { Schema } from 'mongoose';
-import { IProduct } from "@/types/product.types";
+import { IProduct, IWoolworthsProduct, IColesProduct } from "@/types/product.types";
 
-const productSchema = new Schema<IProduct>(
-	{
-		barcode: {
-			type: String,
-			required: true,
-			unique: true,
-			index: true,
-		},
-		lastUpdated: {
-			type: Date,
-			required: true,
-			index: true,
-		},
+// Common base product schema
+const productSchema = new Schema<IProduct>({
+    id: { type: String, required: true, unique: true },
+    retailerId: { type: String, required: true },
+    productId: { type: String, required: true },
+    name: { type: String, required: true },
+    brand: { type: String, required: true },
+    description: { type: String, required: true },    
+    packageSize: { type: String, required: true },
 
-		// Common product info
-		name: { type: String, required: true },
-		description: String,
-		urlFriendlyName: { type: String, required: true },
-		imagesUrl: String, // Default to Woolworths' large image if available
-		packageInfo: {
-			size: String,
-			unit: String,
-			brand: String,
-			weightBasedPricing: Boolean,
-		},
+    pricing: [{
+        trackedAt: { type: Date, required: true },
+        current: { type: Number, required: true },
+        was: { type: Number, required: true },
+        unit: {
+            price: { type: Number, required: true },
+            measure: { type: String, required: true },
+        },
+        isOnSpecial: { type: Boolean, required: true },
+        specialType: { type: [String], required: true },
+        offerDescription: { type: String, required: true },
+    }],
 
-		// Retailer specific data
-		retailers: {
-			woolworths: {
-				stockcode: Number,
-				productUrl: String,
-				status: {
-					isAvailable: Boolean,
-					isHalfPrice: Boolean,
-					isOnSpecial: Boolean,
-					isPurchasable: Boolean,
-					inStoreIsOnSpecial: Boolean,
-					isNew: Boolean,
-					isOnlineOnly: Boolean,
-					productLimit: Number,
-					supplyLimit: Number,
-				},
-			},
-			coles: {
-				productId: String,
-				productUrl: String,
-				status: {
-					isAvailable: Boolean,
-					isHalfPrice: Boolean,
-					isOnSpecial: Boolean,
-				},
-			},
-		},
+    department: { type: String, required: true },
+    category: { type: String, required: true },
+    subCategory: { type: String, required: true },
 
-		priceHistory: [{
-			retailerId: { type: Schema.Types.String, required: true },
-			timestamp: { type: Schema.Types.Date, required: true },
-			price: { type: Schema.Types.Number, required: true },
-			unit: {
-				value: Number,
-					unit: String,
-				},
-				onSpecial: [
-					{
-						retailerId: String,
-						isOnSpecial: Boolean,
-					},
-				],
-			},
-		],
+    metadata: {
+        createdAt: { type: Date, required: true },
+        lastUpdated: { type: Date, required: true },
+        imageUrls: { type: [String], required: true },
+    },
+}, {
+    timestamps: true,
+    discriminatorKey: 'retailerType' // This allows us to create retailer-specific schemas
+});
 
-		categories: [
-			{
-				retailerId: { type: String, required: true },
-				categoryId: { type: String, required: true },
-				name: { type: String, required: true },
-				path: [String],
-			},
-		],
-	},
-	{
-		timestamps: true,
-		collection: "products",
-	}
-)
+// Add common indexes
+productSchema.index({ retailerId: 1, productId: 1 }, { unique: true });
+productSchema.index({ name: 1 });
+productSchema.index({ "pricing.trackedAt": -1 });
+productSchema.index({ department: 1, category: 1, subCategory: 1 });
 
-// Indexes
-productSchema.index({ 'categories.categoryId': 1 });
-productSchema.index({ 'retailers.woolworths.stockcode': 1 });
-productSchema.index({ 'retailers.coles.productCode': 1 });
-productSchema.index({ lastUpdated: 1, 'categories.categoryId': 1 });
-productSchema.index({ 'priceHistory.timestamp': 1, 'priceHistory.retailerId': 1 });
+// Create the base model
+const Product = mongoose.model<IProduct>('Product', productSchema);
 
-export const Product = mongoose.model<IProduct>('Product', productSchema);
+// Create retailer-specific models using discriminators
+const WoolworthsProduct = Product.discriminator<IWoolworthsProduct>(
+    'WoolworthsProduct',
+    new Schema({}, { collection: 'wws_products' })
+);
+
+const ColesProduct = Product.discriminator<IColesProduct>(
+    'ColesProduct',
+    new Schema({}, { collection: 'coles_products' })
+);
+
+export { Product, WoolworthsProduct, ColesProduct };

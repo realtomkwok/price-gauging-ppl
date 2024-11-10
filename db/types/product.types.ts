@@ -1,70 +1,46 @@
 import { Document } from "mongoose"
 
-interface RetailerProductStatus {
-	isAvailable?: boolean
-	isHalfPrice?: boolean
-	isOnSpecial: boolean
+export interface IProduct {
+	id: string //e.g. "retailerId-productId"
+	retailerId: string //e.g. "coles", "wws"
+	productId: string //e.g. Different for each retailer. `Stockcode` for Woolworths. `id` for Coles.
+	barcode: string // e.g. 931172000000. Coles doesn't have this.
+	name: string
+	brand: string
+	description: string
+	packageSize: string
+
+	// Pricing
+	pricing: [
+		{
+			trackedAt: Date
+			current: number
+			was: number // Claimed by retailer
+			unit: {
+				price: number
+				measure: string
+			}
+			isOnSpecial: boolean
+			specialType: string[]
+			offerDescription: string
+		}
+	]
+
+	// Availability & Status
+
+	// Categories
+	department: string
+	category: string
+	subCategory: string
+
+	// Metadata
+	metadata: {
+		createdAt: Date
+		lastUpdated: Date
+		imageUrls: string[]
+	}
 }
 
-export interface IProduct extends Document {
-	barcode: string
-	lastUpdated: Date
+export interface IWoolworthsProduct extends Document<IProduct> {}
 
-	// Common product info
-	name: string // WWS - basic.name
-	description?: string
-	urlFriendlyName: string
-	imagesUrl: string
-	packageInfo: {
-		size?: string
-		unit?: string
-		packageSize?: string
-		brand?: string
-		weightBasedPricing?: boolean
-	}
-	variety: string // Like a specif type or category of product
-
-	// Retailer specific data
-    retailers: {
-        woolworths?: {
-            stockcode: number
-            productUrl: string
-            status: RetailerProductStatus & {
-                isPurchasable: boolean
-                inStoreIsOnSpecial: boolean
-                isNew: boolean
-                isOnlineOnly: boolean
-                productLimit: number
-                supplyLimit: number
-            }
-        }
-        coles?: {
-            productId: string
-            productUrl: string
-            status: RetailerProductStatus
-        }
-    }
-
-    priceHistory: Array<{
-        retailerId: string
-        timestamp: Date
-        price: number
-        unit: {
-            value: number
-            unit: string
-        }
-        onSpecial: [
-            {
-                retailerId: string
-                isOnSpecial: boolean
-            }
-        ]
-    }>
-
-		categories: Array<{
-			retailerId: string
-			categoryId: string
-			name: string
-			path: string[]
-		}>
-	}
+export interface IColesProduct extends Document<IProduct> {}
