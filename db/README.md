@@ -1,12 +1,14 @@
 # PGP Database
 
+**Outdated. Need update to align with the current data schema**
+
 This directory contains the database schema and data for the `price-gauging-ppl`'s database.
 
 ## File Structure
 
 ### Models
 
--   `Product.ts`: Defines the database schema for a product.
+-   `ProductModel.ts`: Defines the database schema for a product.
 
 ### Types
 
@@ -17,7 +19,7 @@ This directory contains the database schema and data for the `price-gauging-ppl`
 -   `mongodb.config.ts`: Configuration for the MongoDB connection.
 
 ## Database Schema
-### Product Schema
+### ProductModel Schema
 
 The product schema represents a retail product with its pricing and historical data across different retailers.
 
@@ -26,16 +28,16 @@ The product schema represents a retail product with its pricing and historical d
 - `retailerId` (String): Identifier for the retailer this product data is from
 - `lastUpdated` (Date): Timestamp of when this product was last updated
 
-#### Basic Product Information 
+#### Basic ProductModel Information 
 Basic product details are the same across all retailers and will be displayed on the price tracker app.
 
 _Notes: Data from Woolworths and Coles may be different._
 
 - `basic`: Core product details
-  - `name`: Product name
-  - `description`: Product description
+  - `name`: ProductModel name
+  - `description`: ProductModel description
   - `urlFriendlyName`: URL-safe version of product name (format: `retailerId-barcode-barcode-name`)
-  - `images`: Product images in different sizes
+  - `images`: ProductModel images in different sizes
     - `small`: Small image URL
     - `medium`: Medium image URL
     - `large`: Large image URL
@@ -67,7 +69,7 @@ _Notes: Data from Woolworths and Coles may be different._
   - `promotions`: Additional promotion details
 
 #### Categorization
-- `categories`: Product categories across retailers
+- `categories`: ProductModel categories across retailers
   - `retailerId`: Retailer identifier
   - `categoryId`: Category identifier
   - `name`: Category name

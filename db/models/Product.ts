@@ -1,14 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
-import { IProduct, IWoolworthsProduct, IColesProduct } from "@/types/product.types";
+import { IProduct, IWoolworthsProduct, IColesProduct } from "@/types/product.types"
 
 // Common base product schema
 const productSchema = new Schema<IProduct>({
-    id: { type: String, required: true, unique: true },
-    retailerId: { type: String, required: true },
-    productId: { type: String, required: true },
-    name: { type: String, required: true },
-    brand: { type: String, required: true },
-    description: { type: String, required: true },    
+	id: { type: String, required: true, unique: true },
+	retailerId: { type: String, required: true },
+	productId: { type: String, required: true },
+	name: { type: String, required: true },
+	brand: { type: String, required: true },
+	description: { type: String, required: true },
     packageSize: { type: String, required: true },
 
     pricing: [{
@@ -35,7 +35,7 @@ const productSchema = new Schema<IProduct>({
     },
 }, {
     timestamps: true,
-    discriminatorKey: 'retailerType' // This allows us to create retailer-specific schemas
+    discriminatorKey: 'retailerId' // Using retailerId as the discriminator key
 });
 
 // Add common indexes
@@ -49,13 +49,13 @@ const Product = mongoose.model<IProduct>('Product', productSchema);
 
 // Create retailer-specific models using discriminators
 const WoolworthsProduct = Product.discriminator<IWoolworthsProduct>(
-    'WoolworthsProduct',
-    new Schema({}, { collection: 'wws_products' })
+    'wws',
+    new Schema({})
 );
 
 const ColesProduct = Product.discriminator<IColesProduct>(
-    'ColesProduct',
-    new Schema({}, { collection: 'coles_products' })
+    'coles',
+    new Schema({})
 );
 
 export { Product, WoolworthsProduct, ColesProduct };

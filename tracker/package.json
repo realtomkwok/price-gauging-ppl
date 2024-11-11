@@ -1,0 +1,24 @@
+{
+	"name": "pgp-tracker",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"test:tracker": "ts-node -r tsconfig-paths/register src/test/tracker.test.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"dotenv": "^16.4.5",
+		"firebase-admin": "^12.7.0",
+		"puppeteer": "^23.7.1",
+		"user-agents": "^1.1.353"
+	},
+	"devDependencies": {
+		"@types/user-agents": "^1.0.4",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0"
+	}
+}

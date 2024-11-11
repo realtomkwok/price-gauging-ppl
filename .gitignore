@@ -40,3 +40,5 @@ data/csv-firebase-data/wws-categories.xlsx
 data/samples/coles-categories.json
 data/samples/coles-category-fruit-vegetables-page1.html
 data/samples/coles-category-fruit-vegs
+data/samples/coles-category-pantry.json
+data/samples/coles-pantry-results.json
