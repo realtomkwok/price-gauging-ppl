@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5433:5432"   // Change the port to 5433 because the default port 5432 is already in use
+      - "5433:5432"  # Change the port to 5433 because the default port 5432 is already in use
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./packages/db/src/migrations:/docker-entrypoint-initdb.d
