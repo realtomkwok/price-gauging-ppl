@@ -23,7 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 data/
-secrets/db_password.txt
 
 # Secret files
 .env
