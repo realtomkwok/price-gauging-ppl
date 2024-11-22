@@ -17,10 +17,10 @@
         "lint": "turbo run lint"
     },
     "devDependencies": {
-        "turbo": "^2.3.0",
-        "typescript": "^5.6.3",
+        "eslint": "^9.14.0",
         "prettier": "^3.3.3",
-        "eslint": "^9.14.0"
+        "turbo": "^2.3.0",
+        "typescript": "^5.6.3"
     },
     "keywords": [],
     "author": "",
@@ -28,5 +28,8 @@
     "bugs": {
         "url": "https://github.com/realtomkwok/price-gauging-ppl/issues"
     },
-    "homepage": "https://github.com/realtomkwok/price-gauging-ppl#readme"
+    "homepage": "https://github.com/realtomkwok/price-gauging-ppl#readme",
+    "dependencies": {
+        "@supabase/supabase-js": "^2.46.1"
+    }
 }
