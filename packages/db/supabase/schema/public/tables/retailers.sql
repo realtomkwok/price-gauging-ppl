@@ -1,17 +1,21 @@
-create table
-  public.retailers (
-    id text not null,
-    name text not null,
-    category_endpoint text null,
-    product_endpoint text null,
-    created_at timestamp with time zone null default current_timestamp,
-    updated_at timestamp with time zone null default current_timestamp,
-    base_url text null,
-    constraint retailers_pkey primary key (id),
-    constraint retailers_id_key unique (id),
-    constraint retailers_name_key unique (name)
-  ) tablespace pg_default;
+CREATE TABLE
+    public.retailers
+(
+    id                text                     NOT NULL,
+    name              text                     NOT NULL,
+    category_endpoint text                     NULL,
+    product_endpoint  text                     NULL,
+    created_at        timestamp with time zone NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        timestamp with time zone NULL DEFAULT CURRENT_TIMESTAMP,
+    base_url          text                     NULL,
+    CONSTRAINT retailers_pkey PRIMARY KEY (id),
+    CONSTRAINT retailers_id_key UNIQUE (id),
+    CONSTRAINT retailers_name_key UNIQUE (name)
+) TABLESPACE pg_default;
 
-create trigger update_retailer_updated_at before
-update on retailers for each row
-execute function update_updated_at_column ();
+CREATE TRIGGER update_retailer_updated_at
+    BEFORE
+        UPDATE
+    ON retailers
+    FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();

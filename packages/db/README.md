@@ -38,3 +38,13 @@
 ## Tech Stack
 - PostgreSQL
 - Supabase for database management and hosting
+
+## Query
+### Query matched products across retailers by `match_id`
+```sql
+SELECT p.*, r.name as retailer_name
+FROM matched_products mp
+JOIN products p ON mp.retailer_id = p.retailer_id AND mp.external_id = p.external_id
+JOIN retailers r ON p.retailer_id = r.id
+WHERE mp.match_id = 'some-match-id';
+```

@@ -1,16 +1,19 @@
-create table
-  public.matched_products (
-    match_id uuid not null default extensions.uuid_generate_v4(),
-    retailer_id text not null,
-    external_id character varying(50) not null,
-    match_confidence numeric(4,3) null,
-    created_at timestamp with time zone default current_timestamp,
-    updated_at timestamp with time zone default current_timestamp,
-    constraint matched_products_pkey primary key (match_id, retailer_id, external_id),
-    constraint matched_products_product_fkey foreign key (retailer_id, external_id) 
-      references products (retailer_id, external_id) on delete cascade,
-    constraint match_confidence_range check (match_confidence >= 0 and match_confidence <= 1)
-  ) tablespace pg_default;
+DROP TABLE IF EXISTS public.matched_products;
 
-create index idx_matched_products_match_id on public.matched_products using btree (match_id);
-create index idx_matched_products_confidence on public.matched_products using btree (match_confidence); 
+CREATE TABLE
+    public.matched_products
+(
+    match_id         uuid                  NOT NULL DEFAULT gen_random_uuid(),
+    retailer_id      text                  NOT NULL,
+    external_id      character varying(50) NOT NULL,
+    match_confidence numeric(4, 3)         NULL,
+    created_at       timestamp with time zone       DEFAULT CURRENT_TIMESTAMP,
+    updated_at       timestamp with time zone       DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT matched_products_pkey PRIMARY KEY (match_id, retailer_id, external_id),
+    CONSTRAINT matched_products_product_fkey FOREIGN KEY (retailer_id, external_id)
+        REFERENCES products (retailer_id, external_id) ON DELETE CASCADE,
+    CONSTRAINT match_confidence_range CHECK (match_confidence >= 0 AND match_confidence <= 1)
+) TABLESPACE pg_default;
+
+CREATE INDEX idx_matched_products_match_id ON public.matched_products USING btree (match_id);
+CREATE INDEX idx_matched_products_confidence ON public.matched_products USING btree (match_confidence);

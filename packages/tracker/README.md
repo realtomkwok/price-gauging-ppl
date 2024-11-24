@@ -48,6 +48,21 @@ When visiting each category page, the client will make a request to Woolworths' 
 The response contains a query of maximum 36 products and category information. The tracker then extract the product information and price, normalize the data and save it to the database.
 ### Pagination
 
+### Extracting Product Information
+Product information is store in the first object of `"Products"` array. The object contains the following information and can be mapped into our data's structure:
+```text
+retailer_id+wooliesProducts.Stockcode => products.id
+wooliesProducts.Barcode => products.barcode
+```
+
+
 
 ## Coles
 Coles' data endpoint is available but more hidden. When visiting the category page via the pagination button, a response is made to the API endpoint: `[category_endpoint].json?slug=[category_slug]` (`endpoint` and `slug` are the same in this case). The response contains 51 items under `pageProps/searchResults/results` and category information. Among the 51 items, only 48 are products and they are labelled as `"PRODUCT"` by the key `"_type"`. Rest of them are promotion cards whc=ich are labelled as `"SINGLE_TILE"`. 
+
+### Pagination
+
+## Types
+```bash
+`supabase gen types typescript --project-id etqqqzwmkaaxuhdicypa > src/types/database.types.ts
+````

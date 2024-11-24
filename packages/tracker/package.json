@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "test:woolies": "tsx src/test/test-woolies.ts"
     },
     "repository": {
         "type": "git",
@@ -15,11 +16,16 @@
         "@types/puppeteer": "^5.4.7",
         "puppeteer": "^23.8.0",
         "supabase": "^1.223.10",
+        "user-agents": "^1.1.366",
         "uuid": "^11.0.3",
         "zod": "^3.23.8"
     },
     "devDependencies": {
-        "@types/puppeteer-core": "^7.0.4"
+        "@types/puppeteer-core": "^7.0.4",
+        "@types/user-agents": "^1.0.4",
+        "typescript": "^5.7.2",
+        "tsx": "^4.19.2"
+        
     },
     "private": true
 }

@@ -1,34 +1,44 @@
-create table
-  public.products (
-    retailer_id text not null,
-    external_id character varying(50) not null,
-    name character varying(255) not null,
-    brand character varying(50) null,
-    description text null,
-    package_size character varying(100) not null,
-    barcode character varying(100) null,
-    image_urls text[] not null default '{}'::text[],
-    categories text[] not null default '{}'::text[],
-    metadata jsonb null default '{}'::jsonb,
-    is_available boolean null default true,
-    last_synced_at timestamp without time zone null,
-    created_at timestamp without time zone null default current_timestamp,
-    updated_at timestamp without time zone null default current_timestamp,
-    search_vector tsvector null,
-    constraint products_pkey primary key (retailer_id, external_id),
-    constraint products_retailer_id_fkey foreign key (retailer_id) references retailers (id)
-  ) tablespace pg_default;
+-- Drop table if exists public.products;
+DROP TABLE IF EXISTS public.products;
 
-create index if not exists idx_products_name on public.products using btree (name) tablespace pg_default;
-create index if not exists idx_products_barcode on public.products using btree (barcode) tablespace pg_default;
-create index if not exists idx_products_search on public.products using gin (search_vector) tablespace pg_default;
-create index if not exists idx_products_categories on public.products using gin (categories) tablespace pg_default;
+CREATE TABLE
+    public.products
+(
+    retailer_id    text                        NOT NULL,
+    external_id    character varying(50)       NOT NULL,
+    name           character varying(255)      NOT NULL,
+    brand          character varying(50)       NULL,
+    description    text                        NULL,
+    package_size   character varying(100)      NOT NULL,
+    barcode        character varying(100)      NULL,
+    image_urls     text[]                      NOT NULL DEFAULT '{}'::text[],
+    categories     text[]                      NOT NULL DEFAULT '{}'::text[],
+    metadata       jsonb                       NULL     DEFAULT '{}'::jsonb,
+    is_available   boolean                     NULL     DEFAULT TRUE,
+    last_synced_at timestamp without time zone NULL,
+    created_at     timestamp without time zone NULL     DEFAULT CURRENT_TIMESTAMP,
+    updated_at     timestamp without time zone NULL     DEFAULT CURRENT_TIMESTAMP,
+    search_vector  tsvector                    NULL,
+    CONSTRAINT products_pkey PRIMARY KEY (retailer_id, external_id),
+    CONSTRAINT products_retailer_id_fkey FOREIGN KEY (retailer_id) REFERENCES retailers (id)
+) TABLESPACE pg_default;
 
-create trigger update_product_updated_at before
-update on products for each row
-execute function update_updated_at_column ();
+CREATE INDEX IF NOT EXISTS idx_products_name ON public.products USING btree (name) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_products_barcode ON public.products USING btree (barcode) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_products_search ON public.products USING gin (search_vector) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_products_categories ON public.products USING gin (categories) TABLESPACE pg_default;
 
-create trigger products_search_vector_update before insert
-or
-update on products for each row
-execute function update_search_vector ();
+CREATE TRIGGER update_product_updated_at
+    BEFORE
+        UPDATE
+    ON products
+    FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER products_search_vector_update
+    BEFORE INSERT
+        OR
+        UPDATE
+    ON products
+    FOR EACH ROW
+EXECUTE FUNCTION update_search_vector();
