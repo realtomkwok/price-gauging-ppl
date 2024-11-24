@@ -7,7 +7,19 @@
 │   │   ├── pg_hba.conf
 │   │   └── postgresql.conf
 │   ├── index.ts
-│   └── migrations
+│   ├── supabase
+│   │   ├── schema
+│   │   │   ├── public
+│   │   │   │   ├── tables
+│   │   │   │   │   ├── prices.sql
+│   │   │   │   │   ├── products.sql
+│   │   │   │   │   ├── matched_products.sql
+│   │   │   │   │   ├── retailers.sql
+│   │   │   │   │   ├── retailer_categories.sql
+│   │   │   │   ├── views
+│   │   │   │   │   ├── coles_tracking_categories.sql
+│   │   │   │   │   ├── wws_tracking_categories.sql
+│   │   └── migrations
 │       ├── 001_init.sql                                # Create database and schema
 │       ├── 002_create_retailers.sql                    # Create retailers table
 │       ├── 003_create_departments_categories.sql       # Create departments and categories tables
